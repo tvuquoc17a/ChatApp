@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF9800"
+    tools:context=".LoginActivity">
+
+    <EditText
+        android:id="@+id/edtLoginEmail"
+        android:layout_width="343dp"
+        android:layout_height="56dp"
+        android:autofillHints="Email"
+        android:background="@drawable/rounder_corner_backgorund"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:paddingStart="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edtLoginPassword"
+        android:layout_width="342dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="10dp"
+        android:autofillHints="Password"
+        android:background="@drawable/rounder_corner_backgorund"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:paddingStart="20dp"
+        app:layout_constraintEnd_toEndOf="@id/edtLoginEmail"
+        app:layout_constraintStart_toStartOf="@id/edtLoginEmail"
+        app:layout_constraintTop_toBottomOf="@id/edtLoginEmail"
+        tools:layout_editor_absoluteX="96dp"
+        tools:layout_editor_absoluteY="263dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rounder_corner_button_bg"
+        android:text="login"
+        app:layout_constraintEnd_toEndOf="@id/edtLoginPassword"
+        app:layout_constraintStart_toStartOf="@id/edtLoginPassword"
+        app:layout_constraintTop_toBottomOf="@id/edtLoginPassword" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
