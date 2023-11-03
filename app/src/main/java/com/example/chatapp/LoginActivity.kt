@@ -1,5 +1,6 @@
 package com.example.chatapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -28,6 +29,8 @@ class LoginActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener() {
                     if (!it.isSuccessful) return@addOnCompleteListener
+                    val intent = Intent(this, LatestMessagesActivity::class.java)
+                    startActivity(intent)
                     Toast.makeText(this, "Login succesfully", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener{
