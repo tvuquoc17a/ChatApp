@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#A86A6A"
     android:backgroundTint="#03A9F4"
-    tools:context=".RegisterActivity">
+    tools:context="registerlogin.RegisterActivity">
 
     <EditText
         android:id="@+id/editTextTextName"
@@ -32,6 +32,7 @@
         android:background="@drawable/rounder_corner_backgorund"
         android:ems="10"
         android:hint="@string/email"
+        android:textColorHint="@color/black"
         android:inputType="textEmailAddress"
         android:paddingStart="15sp"
         android:textSize="20sp"
@@ -63,6 +64,9 @@
         android:layout_marginTop="44dp"
         android:background="@drawable/rounder_corner_button_bg"
         android:text="@string/register"
+        android:fontFamily="@font/montserrat"
+        android:textFontWeight="600"
+        android:textStyle="bold"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@id/editTextTextPassword"
         app:layout_constraintStart_toStartOf="@id/editTextTextPassword"

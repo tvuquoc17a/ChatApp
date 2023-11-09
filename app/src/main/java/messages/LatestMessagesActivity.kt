@@ -1,13 +1,13 @@
-package com.example.chatapp
+package messages
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import com.example.chatapp.R
+import registerlogin.RegisterActivity
 import com.example.chatapp.databinding.ActivityLatestMessagesBinding
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 
 class LatestMessagesActivity : AppCompatActivity() {
@@ -17,7 +17,7 @@ class LatestMessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLatestMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        actionBar?.show()
+        //actionBar?.show()
 
         verifyUserIsLogged()
     }

@@ -1,12 +1,12 @@
-package com.example.chatapp
+package registerlogin
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.example.chatapp.databinding.ActivityLoginBinding
-import com.example.chatapp.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import messages.LatestMessagesActivity
 
 class LoginActivity : AppCompatActivity() {
 

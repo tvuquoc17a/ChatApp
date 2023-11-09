@@ -12,27 +12,35 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.DayNight"
+        android:theme="@style/Theme.AppCompat.Light"
         tools:targetApi="31">
         <activity
-            android:name=".NewMessageActivity"
-            android:exported="false"/>
+            android:name="messages.ChatLogMessenger"
+            android:exported="true" />
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value=".LatestMessagesActivity" />
+            android:value="messages.LatestMessagesActivity" />
+        <activity
+            android:name="messages.NewMessageActivity"
+            android:exported="false" />
+
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="messages.LatestMessagesActivity" />
 
         <activity
-            android:name=".LatestMessagesActivity"
+            android:name="messages.LatestMessagesActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name="registerlogin.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
-            android:theme="@style/Theme.AppCompat"
-            android:exported="true">
+            android:name="registerlogin.RegisterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
