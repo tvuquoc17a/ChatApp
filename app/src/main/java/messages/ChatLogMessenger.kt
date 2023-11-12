@@ -1,18 +1,26 @@
 package messages
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.example.chatapp.ChatFromItem
 import com.example.chatapp.ChatToItem
 import com.example.chatapp.databinding.ActivityChatLogMessengerBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import models.ChatMessage
 import models.User
 
 class ChatLogMessenger : AppCompatActivity() {
     private lateinit var binding: ActivityChatLogMessengerBinding
+    val adapter = GroupAdapter<GroupieViewHolder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatLogMessengerBinding.inflate(layoutInflater)
@@ -24,21 +32,81 @@ class ChatLogMessenger : AppCompatActivity() {
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         supportActionBar?.title = user?.username
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // hiển thị nút back
-        val adapter = GroupAdapter<GroupieViewHolder>()
-        adapter.add(ChatToItem())
-        adapter.add(ChatToItem())
-        adapter.add(ChatFromItem())
-        adapter.add(ChatToItem())
-        adapter.add(ChatToItem())
-        adapter.add(ChatFromItem())
 
-        binding.recyclerviewChatLog.adapter = adapter
+        listenForMessages()
+
+        binding.btnSendButton.setOnClickListener() {
+            performSendMessage()
+            binding.edtNewMessage.clearFocus()
+        }
+        val adapter = GroupAdapter<GroupieViewHolder>()
+        //addDumpData()
+
+    }
+
+    private fun addDumpData() {
+    }
+
+    private fun listenForMessages() {
+        val ref = FirebaseDatabase.getInstance().getReference("/messages")
+        ref.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, p1: String?) {
+                val chatMessage = snapshot.getValue(ChatMessage::class.java)
+
+                if (chatMessage != null) {
+                    Log.d(
+                        "listen", chatMessage.text.toString()
+                    )// phân chia tin nhắn lệch sang 2 phía recyclerview
+                    if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
+                        adapter.add(ChatFromItem(chatMessage.text, LatestMessagesActivity.currentUser))
+                    }else{
+                        val toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+                        adapter.add(ChatToItem(chatMessage.text, toUser))
+                    }
+                    binding.recyclerviewChatLog.adapter = adapter
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    private fun performSendMessage() {
+        val text = binding.edtNewMessage.text.toString()
+        val fromId = FirebaseAuth.getInstance().uid// lấy luôn id của người đang dung
+        val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+        val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+        val chatMessage = ChatMessage(
+            text,
+            reference.key.toString(),
+            fromId.toString(),
+            user?.uid.toString(),
+            System.currentTimeMillis() / 1000
+        )
+        reference.setValue(chatMessage)
+            .addOnSuccessListener {
+                Log.d("Send", "send succesfully ${reference.key}")
+            }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // return to latest message activity
-        when(item.itemId){
-            android.R.id.home ->{
+        when (item.itemId) {
+            android.R.id.home -> {
                 val intent = Intent(this, LatestMessagesActivity::class.java)
                 startActivity(intent)
                 finish()

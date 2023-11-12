@@ -9,8 +9,17 @@ import com.example.chatapp.R
 import registerlogin.RegisterActivity
 import com.example.chatapp.databinding.ActivityLatestMessagesBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import models.User
 
 class LatestMessagesActivity : AppCompatActivity() {
+
+    companion object{
+        var currentUser : User? = null
+    }
 
     private lateinit var binding : ActivityLatestMessagesBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,8 +27,23 @@ class LatestMessagesActivity : AppCompatActivity() {
         binding = ActivityLatestMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //actionBar?.show()
+        fetchCurrentUser()
 
         verifyUserIsLogged()
+    }
+
+    private fun fetchCurrentUser() {
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                currentUser = snapshot.getValue(User::class.java)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
     //kiểm tra xem user đã đăng nhập hay chưa
