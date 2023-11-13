@@ -20,6 +20,7 @@ import models.User
 
 class ChatLogMessenger : AppCompatActivity() {
     private lateinit var binding: ActivityChatLogMessengerBinding
+    var toUser : User? = null
     val adapter = GroupAdapter<GroupieViewHolder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +30,8 @@ class ChatLogMessenger : AppCompatActivity() {
 
 
         // get data from NewMessageActivity
-        val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-        supportActionBar?.title = user?.username
+        toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+        supportActionBar?.title = toUser?.username
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // hiển thị nút back
 
         listenForMessages()
@@ -48,7 +49,9 @@ class ChatLogMessenger : AppCompatActivity() {
     }
 
     private fun listenForMessages() {
-        val ref = FirebaseDatabase.getInstance().getReference("/messages")
+        val fromId = FirebaseAuth.getInstance().uid
+        val toId = toUser?.uid
+        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, p1: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
@@ -89,7 +92,9 @@ class ChatLogMessenger : AppCompatActivity() {
         val text = binding.edtNewMessage.text.toString()
         val fromId = FirebaseAuth.getInstance().uid// lấy luôn id của người đang dung
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-        val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+        val toId = user?.uid
+        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
+        val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()// đồng thời tạo 1 tin nhắn lưu ở phía bên kia
         val chatMessage = ChatMessage(
             text,
             reference.key.toString(),
@@ -100,7 +105,10 @@ class ChatLogMessenger : AppCompatActivity() {
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d("Send", "send succesfully ${reference.key}")
+                binding.edtNewMessage.setText("")
+                binding.recyclerviewChatLog.scrollToPosition(adapter.itemCount-1)
             }
+        toReference.setValue(chatMessage)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
