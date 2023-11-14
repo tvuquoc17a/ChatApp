@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.example.chatapp.ChatFromItem
-import com.example.chatapp.ChatToItem
+import views.ChatFromItem
+import views.ChatToItem
 import com.example.chatapp.databinding.ActivityChatLogMessengerBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
@@ -45,8 +45,6 @@ class ChatLogMessenger : AppCompatActivity() {
 
     }
 
-    private fun addDumpData() {
-    }
 
     private fun listenForMessages() {
         val fromId = FirebaseAuth.getInstance().uid
@@ -109,6 +107,10 @@ class ChatLogMessenger : AppCompatActivity() {
                 binding.recyclerviewChatLog.scrollToPosition(adapter.itemCount-1)
             }
         toReference.setValue(chatMessage)
+        val latestChatReference = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        latestChatReference.setValue(chatMessage)
+        val latestChatToReference = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+        latestChatToReference.setValue(chatMessage)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

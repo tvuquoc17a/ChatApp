@@ -59,5 +59,6 @@ dependencies {
     implementation("com.google.firebase:firebase-database")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 }
 
