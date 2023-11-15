@@ -20,7 +20,7 @@ import models.User
 
 class ChatLogMessenger : AppCompatActivity() {
     private lateinit var binding: ActivityChatLogMessengerBinding
-    var toUser : User? = null
+    private var toUser : User? = null
     val adapter = GroupAdapter<GroupieViewHolder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

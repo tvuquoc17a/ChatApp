@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.chatapp.R
 import registerlogin.RegisterActivity
 import com.example.chatapp.databinding.ActivityLatestMessagesBinding
@@ -34,9 +35,19 @@ class LatestMessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLatestMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.d("Latest", "adddumpdata")
+        binding.recyclerviewLatestMessages.adapter = adapter
+        binding.recyclerviewLatestMessages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        // set title of actionbar = username of user
+
         supportActionBar?.title = FirebaseAuth.getInstance().uid
 
+        //mở chat log với người dùng khi ấn vào row trong latest activity
+        adapter.setOnItemClickListener { item, view ->
+            val intent = Intent(this,ChatLogMessenger::class.java)
+            val row = item as LatestMessagesRow
+            intent.putExtra(NewMessageActivity.USER_KEY, row.chatPartnerUser)
+            startActivity(intent)
+        }
 
         listenForLatestMessages()
         fetchCurrentUser()
