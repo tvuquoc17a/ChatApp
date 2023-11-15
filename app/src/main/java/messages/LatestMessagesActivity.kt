@@ -37,9 +37,16 @@ class LatestMessagesActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.recyclerviewLatestMessages.adapter = adapter
         binding.recyclerviewLatestMessages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        // set title of actionbar = username of user
 
-        supportActionBar?.title = FirebaseAuth.getInstance().uid
+
+        fun setUserName () {val ref = FirebaseDatabase.getInstance().getReference("/users")
+            ref.child(FirebaseAuth.getInstance().uid.toString()).child("username").get().addOnSuccessListener {
+                supportActionBar?.title = it.value.toString()
+            }.addOnFailureListener{
+                Log.d("Latest", "Failed to get username")
+            }
+        }
+        setUserName()
 
         //mở chat log với người dùng khi ấn vào row trong latest activity
         adapter.setOnItemClickListener { item, view ->
