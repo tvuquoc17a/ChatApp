@@ -10,9 +10,5 @@
         android:icon="@drawable/chat_bubble"
         app:showAsAction="ifRoom"
         tools:ignore="MenuTitle" />
-    <item android:id="@+id/user_image"
-        android:icon="@drawable/chat_bubble"
-        app:showAsAction="ifRoom"
-        tools:ignore="MenuTitle" />
 
 </menu>

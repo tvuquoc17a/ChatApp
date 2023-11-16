@@ -1,6 +1,11 @@
 package views
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.graphics.Typeface
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getSystemService
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.google.firebase.auth.FirebaseAuth
@@ -16,14 +21,29 @@ import models.User
 
 class LatestMessagesRow(private val chatMessage: ChatMessage?) : Item<GroupieViewHolder>() {
     var chatPartnerUser : User? = null
+    @SuppressLint("SetTextI18n")
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        viewHolder.itemView.findViewById<TextView>(R.id.tv_latest_message).text = chatMessage?.text
 
-        val chatPartnerId : String = if(chatMessage?.fromId == FirebaseAuth.getInstance().uid)
+
+        val chatPartnerId : String
+        if(chatMessage?.fromId == FirebaseAuth.getInstance().uid)
         {
-            chatMessage?.toId.toString()
+            chatPartnerId = chatMessage?.toId.toString()
+            viewHolder.itemView.findViewById<TextView>(R.id.tv_latest_message).text = "You: " + chatMessage?.text
+            val notificationManager = getSystemService(viewHolder.itemView.context, NotificationManager::class.java) as NotificationManager
+            val channelId = "com.example.chatapp"
+            val channelName = "ChatApp"
+            val description = "ChatApp"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, channelName, importance)
+            channel.description = description
+            notificationManager.createNotificationChannel(channel)
+
         } else{
-            chatMessage?.fromId.toString()
+            chatPartnerId = chatMessage?.fromId.toString()
+            val targetTextView = viewHolder.itemView.findViewById<TextView>(R.id.tv_latest_message)
+            targetTextView.text  = chatMessage?.text
+            targetTextView.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         }
         val ref = FirebaseDatabase.getInstance().getReference("/users/$chatPartnerId")
         ref.addListenerForSingleValueEvent(object : ValueEventListener{
@@ -32,6 +52,16 @@ class LatestMessagesRow(private val chatMessage: ChatMessage?) : Item<GroupieVie
                 viewHolder.itemView.findViewById<TextView>(R.id.userName).text = chatPartnerUser?.username
                 val targetImage = viewHolder.itemView.findViewById<CircleImageView>(R.id.userImage_latest_message)
                 Glide.with(viewHolder.itemView.context).load(chatPartnerUser?.profileImageUrl).into(targetImage)
+                // notify new message
+                val notificationManager = getSystemService(viewHolder.itemView.context, NotificationManager::class.java) as NotificationManager
+                val channelId = "com.example.chatapp"
+                val channelName = "ChatApp"
+                val description = "ChatApp"
+                val importance = NotificationManager.IMPORTANCE_HIGH
+                val channel = NotificationChannel(channelId, channelName, importance)
+                channel.description = description
+                notificationManager.createNotificationChannel(channel)
+
             }
 
             override fun onCancelled(error: DatabaseError) {
