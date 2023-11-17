@@ -1,17 +1,16 @@
 package messages
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.ImageView
-import android.widget.RelativeLayout
+import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.chatapp.R
-import com.example.chatapp.R.*
+import com.example.chatapp.R.id
 import com.example.chatapp.databinding.ActivityLatestMessagesBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
@@ -27,7 +26,7 @@ import models.User
 import registerlogin.RegisterActivity
 import views.LatestMessagesRow
 
-class LatestMessagesActivity : AppCompatActivity() {
+class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
     private val adapter = GroupAdapter<GroupieViewHolder>()
 
@@ -47,7 +46,10 @@ class LatestMessagesActivity : AppCompatActivity() {
                 DividerItemDecoration.VERTICAL
             )
         )
-        // set user image in toolbar
+//        val popupMenu = PopupMenu(this, binding.userImage)
+//        popupMenu.setOnMenuItemClickListener(this)
+//        popupMenu.inflate(R.menu.menu1)
+//        popupMenu.show()
 
 
         fun toolbarSetting() {
@@ -60,7 +62,7 @@ class LatestMessagesActivity : AppCompatActivity() {
                 }.addOnFailureListener {
                     Log.d("Latest", "Failed to get username")
                 }
-            val userImage = findViewById<ImageView>(id.user_image)
+            val userImage = findViewById<ImageView>(R.id.user_image)
             // set user image in toolbar
             ref.child(FirebaseAuth.getInstance().uid.toString()).child("profileImageUrl")
                 .get()
@@ -69,9 +71,13 @@ class LatestMessagesActivity : AppCompatActivity() {
                 }.addOnFailureListener {
                     Log.d("Latest", "Failed to get user image")
                 }
-            val toolbar = binding.toolBar
-            // set back button
-
+            userImage.setOnClickListener {
+                //popupMenu.show()
+                val popupMenu = PopupMenu(this, userImage)
+                popupMenu.setOnMenuItemClickListener(this)
+                popupMenu.inflate(R.menu.menu1)
+                popupMenu.show()
+            }
         }
         toolbarSetting()
 
@@ -161,6 +167,20 @@ class LatestMessagesActivity : AppCompatActivity() {
         }
     }
 
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.menu_item_2 -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, RegisterActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
+                return true
+            }
+            else -> false
+        }
+
+    }
+
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //        when (item.itemId){
 //            R.id.menu_new_message -> {
@@ -183,3 +203,4 @@ class LatestMessagesActivity : AppCompatActivity() {
 //        return super.onCreateOptionsMenu(menu)
 //    }
 }
+

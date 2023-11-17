@@ -23,17 +23,21 @@
             android:textSize="20sp"
             tools:text="user_name" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_image"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="15dp"
-            android:clickable="true"
-            tools:layout_editor_absoluteX="114dp"
-            tools:layout_editor_absoluteY="10dp" />
 
     </androidx.appcompat.widget.Toolbar>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_image"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="15dp"
+        android:clickable="true"
+        tools:layout_editor_absoluteX="114dp"
+        tools:layout_editor_absoluteY="10dp"
+        app:layout_constraintEnd_toEndOf="@id/tool_bar"
+        android:contextClickable="true"
+        app:layout_constraintTop_toTopOf="@id/tool_bar"
+        app:layout_constraintBottom_toBottomOf="@id/tool_bar"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerviewLatestMessages"

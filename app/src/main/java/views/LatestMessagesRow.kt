@@ -30,14 +30,6 @@ class LatestMessagesRow(private val chatMessage: ChatMessage?) : Item<GroupieVie
         {
             chatPartnerId = chatMessage?.toId.toString()
             viewHolder.itemView.findViewById<TextView>(R.id.tv_latest_message).text = "You: " + chatMessage?.text
-            val notificationManager = getSystemService(viewHolder.itemView.context, NotificationManager::class.java) as NotificationManager
-            val channelId = "com.example.chatapp"
-            val channelName = "ChatApp"
-            val description = "ChatApp"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(channelId, channelName, importance)
-            channel.description = description
-            notificationManager.createNotificationChannel(channel)
 
         } else{
             chatPartnerId = chatMessage?.fromId.toString()
@@ -52,18 +44,7 @@ class LatestMessagesRow(private val chatMessage: ChatMessage?) : Item<GroupieVie
                 viewHolder.itemView.findViewById<TextView>(R.id.userName).text = chatPartnerUser?.username
                 val targetImage = viewHolder.itemView.findViewById<CircleImageView>(R.id.userImage_latest_message)
                 Glide.with(viewHolder.itemView.context).load(chatPartnerUser?.profileImageUrl).into(targetImage)
-                // notify new message
-                val notificationManager = getSystemService(viewHolder.itemView.context, NotificationManager::class.java) as NotificationManager
-                val channelId = "com.example.chatapp"
-                val channelName = "ChatApp"
-                val description = "ChatApp"
-                val importance = NotificationManager.IMPORTANCE_HIGH
-                val channel = NotificationChannel(channelId, channelName, importance)
-                channel.description = description
-                notificationManager.createNotificationChannel(channel)
-
             }
-
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
