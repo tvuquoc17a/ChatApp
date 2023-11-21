@@ -3,8 +3,10 @@ package views
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.graphics.Typeface
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
@@ -16,6 +18,7 @@ import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import de.hdodenhof.circleimageview.CircleImageView
+import messages.LatestMessagesActivity
 import models.ChatMessage
 import models.User
 

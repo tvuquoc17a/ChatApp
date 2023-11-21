@@ -3,9 +3,12 @@ package registerlogin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.example.chatapp.databinding.ActivityLoginBinding
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import messages.LatestMessagesActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -32,10 +35,25 @@ class LoginActivity : AppCompatActivity() {
                     val intent = Intent(this, LatestMessagesActivity::class.java)
                     startActivity(intent)
                     Toast.makeText(this, "Login succesfully", Toast.LENGTH_SHORT).show()
+                    getToken()
                 }
                 .addOnFailureListener{
                     Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
                 }
         }
     }
+
+    private fun getToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM TOKEN Failed", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            val token = task.result
+            Log.d("FCM TOKEN", token)
+        })
+    }
 }
+
+

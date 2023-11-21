@@ -40,7 +40,7 @@ class NewMessageActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 companion object {
-    val USER_KEY = "USER_KEY"
+    const val USER_KEY = "USER_KEY"
 }
     private fun fetchUsers() {
         val ref = FirebaseDatabase.getInstance().getReference("/users")

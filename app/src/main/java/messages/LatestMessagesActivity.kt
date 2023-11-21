@@ -1,5 +1,8 @@
 package messages
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +11,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.chatapp.R
 import com.example.chatapp.R.id
@@ -46,10 +50,6 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
                 DividerItemDecoration.VERTICAL
             )
         )
-//        val popupMenu = PopupMenu(this, binding.userImage)
-//        popupMenu.setOnMenuItemClickListener(this)
-//        popupMenu.inflate(R.menu.menu1)
-//        popupMenu.show()
 
 
         fun toolbarSetting() {
@@ -94,13 +94,16 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
     }
 
     val latestMessagesMap = HashMap<String, ChatMessage>()
+    private val newLatestMessage = HashMap<String, ChatMessage>()
 
     fun refreshRecyclerView() {
-        adapter.clear()
+
+
         latestMessagesMap.values.forEach {
             adapter.add(LatestMessagesRow(it))
-            binding.recyclerviewLatestMessages.adapter = adapter
+            newLatestMessage[it.fromId] = it
         }
+        binding.recyclerviewLatestMessages.adapter = adapter
     }
 
     private fun listenForLatestMessages() {
@@ -109,15 +112,32 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+//                latestMessagesMap.remove(snapshot.key) // Remove key if already exists
+                latestMessagesMap[snapshot.key!!] = chatMessage // Add message to the top
+                latestMessagesMap.values.forEach(){
+                    Log.d("Latest1", it.text.toString())
+                }
                 adapter.add(LatestMessagesRow(chatMessage))
-                latestMessagesMap[snapshot.key!!] = chatMessage
-                refreshRecyclerView()
+                if (chatMessage.fromId != FirebaseAuth.getInstance().uid) {
+                    notify(chatMessage.text.toString())
+                }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
-                latestMessagesMap[snapshot.key!!] = chatMessage
-                refreshRecyclerView()
+                latestMessagesMap.remove(snapshot.key) // Remove key if already exists
+                latestMessagesMap.values.forEach(){
+                    //add each message to newLatestMessage
+                    newLatestMessage[it.fromId] = it
+                }
+
+                adapter.clear()
+                adapter.add(0, LatestMessagesRow(chatMessage))
+                newLatestMessage.values.forEach(){
+                    Log.d("Latest", it.text.toString())
+                    adapter.add(LatestMessagesRow(it))
+                }
+                binding.recyclerviewLatestMessages.adapter = adapter
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -133,6 +153,48 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
             }
 
         })
+    }
+
+    private fun addRemainMessage() {
+        newLatestMessage.values.forEach {
+           adapter.add(LatestMessagesRow(it))
+        }
+    }
+
+    fun notify(description: String) {
+        // Tạo kênh thông báo
+        val channel = NotificationChannel(
+            "notify",
+            "notify",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        channel.description = description
+        channel.setShowBadge(true)
+        channel.enableVibration(true)
+        channel.enableLights(true)
+
+// Đăng ký kênh thông báo
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+
+        // Tạo thông báo
+        val notification = NotificationCompat.Builder(this, "notify")
+            .setContentTitle("Tin nhắn mới")
+            .setContentText(description)
+            .setSmallIcon(R.drawable.baseline_email_24)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(this, LatestMessagesActivity::class.java),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+            .build()
+
+        // Hiển thị thông báo
+        notificationManager.notify(1, notification)
+
     }
 
 //    private fun addDumpData() {
@@ -176,6 +238,7 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
                 startActivity(intent)
                 return true
             }
+
             else -> false
         }
 
