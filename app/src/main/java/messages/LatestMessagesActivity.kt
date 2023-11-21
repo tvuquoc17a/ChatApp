@@ -13,6 +13,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.chatapp.R
 import com.example.chatapp.R.id
 import com.example.chatapp.databinding.ActivityLatestMessagesBinding
@@ -50,6 +52,7 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
                 DividerItemDecoration.VERTICAL
             )
         )
+        binding.recyclerviewLatestMessages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
 
 
         fun toolbarSetting() {
@@ -93,18 +96,9 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
         verifyUserIsLogged()
     }
 
-    val latestMessagesMap = HashMap<String, ChatMessage>()
+    val latestMessagesMap = LinkedHashMap<String, ChatMessage>()
     private val newLatestMessage = HashMap<String, ChatMessage>()
 
-    fun refreshRecyclerView() {
-
-
-        latestMessagesMap.values.forEach {
-            adapter.add(LatestMessagesRow(it))
-            newLatestMessage[it.fromId] = it
-        }
-        binding.recyclerviewLatestMessages.adapter = adapter
-    }
 
     private fun listenForLatestMessages() {
         val fromId = FirebaseAuth.getInstance().uid
@@ -112,32 +106,24 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
-//                latestMessagesMap.remove(snapshot.key) // Remove key if already exists
                 latestMessagesMap[snapshot.key!!] = chatMessage // Add message to the top
-                latestMessagesMap.values.forEach(){
-                    Log.d("Latest1", it.text.toString())
-                }
-                adapter.add(LatestMessagesRow(chatMessage))
+                refreshRecyclerView()
                 if (chatMessage.fromId != FirebaseAuth.getInstance().uid) {
-                    notify(chatMessage.text.toString())
+                    notify(chatMessage.text)
                 }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
-                latestMessagesMap.remove(snapshot.key) // Remove key if already exists
-                latestMessagesMap.values.forEach(){
-                    //add each message to newLatestMessage
-                    newLatestMessage[it.fromId] = it
-                }
+                val messageId = snapshot.key ?: return // Lấy khóa của tin nhắn
 
-                adapter.clear()
-                adapter.add(0, LatestMessagesRow(chatMessage))
-                newLatestMessage.values.forEach(){
-                    Log.d("Latest", it.text.toString())
-                    adapter.add(LatestMessagesRow(it))
+                latestMessagesMap.remove(messageId) // Loại bỏ tin nhắn khỏi danh sách
+                latestMessagesMap[messageId] = chatMessage // Thêm tin nhắn mới vào đầu danh sách
+
+                refreshRecyclerView()
+                if (chatMessage.fromId != FirebaseAuth.getInstance().uid) {
+                    notify(chatMessage.text)
                 }
-                binding.recyclerviewLatestMessages.adapter = adapter
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -151,9 +137,18 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
-
         })
     }
+
+    private fun refreshRecyclerView() {
+        adapter.clear()
+        latestMessagesMap.values.forEach { chatMessage ->
+            adapter.add(LatestMessagesRow(chatMessage))
+        }
+        binding.recyclerviewLatestMessages.adapter = adapter
+        // Các cài đặt khác cho RecyclerView nếu cần thiết
+    }
+
 
     private fun addRemainMessage() {
         newLatestMessage.values.forEach {
