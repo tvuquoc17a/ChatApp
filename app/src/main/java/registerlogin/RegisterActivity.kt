@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.chatapp.R
 import com.example.chatapp.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -26,6 +27,7 @@ class RegisterActivity : AppCompatActivity() {
 
         //hide action bar
         actionBar?.hide()
+        setDefaultAvatar()
 
         binding.btnRegister.setOnClickListener() {
             val email = binding.editTextTextEmailAddress.text.toString()
@@ -62,10 +64,19 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    var selectedPhoto : Uri? = null
+    private fun setDefaultAvatar() {
+        binding.circleImageviewRegister.setImageResource(R.drawable.default_avt)
+        binding.btnSelectImageProfile.alpha = 0f
+        selectedPhoto = Uri.parse("android.resource://com.example.chatapp/drawable/default_avt")
+    }
+
+    private var selectedPhoto : Uri? = null
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        // default image is default_avt and when user chose image, it will be change
+
         if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
             Log.d("Main", "Photo was select")
             selectedPhoto = data.data
@@ -77,14 +88,13 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun uploadImageToFirebaseStorage() {
-        if(selectedPhoto == null) return
 
         val fileName = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/images/$fileName")
 
         ref.putFile(selectedPhoto!!)
-            .addOnSuccessListener{
-                Log.d("RegisterActivity", "Upload photo succesfully : ${it.metadata?.path}")
+            .addOnSuccessListener{ it ->
+                Log.d("RegisterActivity", "Upload photo successfully : ${it.metadata?.path}")
 
                 ref.downloadUrl.addOnSuccessListener {
                     Log.d("RegisterActivity", "File location : $it")
