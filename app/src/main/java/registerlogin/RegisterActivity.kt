@@ -26,7 +26,7 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //hide action bar
-        actionBar?.hide()
+        supportActionBar?.hide()
         setDefaultAvatar()
 
         binding.btnRegister.setOnClickListener() {
@@ -42,7 +42,7 @@ class RegisterActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener() {
                     if (!it.isSuccessful) return@addOnCompleteListener
-                    Toast.makeText(this, "Create succesfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Create successfully", Toast.LENGTH_SHORT).show()
                     uploadImageToFirebaseStorage()
                 }
                 .addOnFailureListener {

@@ -40,9 +40,6 @@ class ChatLogMessenger : AppCompatActivity() {
             performSendMessage()
             binding.edtNewMessage.clearFocus()
         }
-        val adapter = GroupAdapter<GroupieViewHolder>()
-        //addDumpData()
-
     }
 
 
@@ -102,14 +99,16 @@ class ChatLogMessenger : AppCompatActivity() {
         )
         reference.setValue(chatMessage)
             .addOnSuccessListener {
-                Log.d("Send", "send succesfully ${reference.key}")
+                Log.d("Send", "send successfully ${reference.key}")
                 binding.edtNewMessage.setText("")
                 binding.recyclerviewChatLog.scrollToPosition(adapter.itemCount-1)
             }
         toReference.setValue(chatMessage)
         val latestChatReference = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
         latestChatReference.setValue(chatMessage)
+        Log.d("change", "send successfully ${latestChatReference.key}")
         val latestChatToReference = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+        Log.d("change", "send successfully ${latestChatToReference.key}")
         latestChatToReference.setValue(chatMessage)
     }
 

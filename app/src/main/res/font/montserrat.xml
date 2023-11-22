@@ -3,9 +3,13 @@
     <font
         android:fontStyle="normal"
         android:font="@font/montserrat_italic_variablefont_wght"
-        android:fontWeight="800" />
+        android:fontWeight="1200" />
     <font
         android:fontStyle="italic"
         android:font="@font/montserrat_variablefont_wght"
+        android:fontWeight="400"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/montserrat_medium"
         android:fontWeight="400"/>
 </font-family>

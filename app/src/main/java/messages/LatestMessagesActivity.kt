@@ -57,6 +57,7 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
 
         fun toolbarSetting() {
             val ref = FirebaseDatabase.getInstance().getReference("/users")
+            // set username in toolbar
             ref.child(FirebaseAuth.getInstance().uid.toString()).child("username")
                 .get()
                 .addOnSuccessListener {
@@ -81,6 +82,12 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
                 popupMenu.inflate(R.menu.menu1)
                 popupMenu.show()
             }
+            //set new message button
+            binding.newMessage.setOnClickListener {
+                val intent = Intent(this, NewMessageActivity::class.java)
+                startActivity(intent)
+            }
+            supportActionBar?.hide()
         }
         toolbarSetting()
 
@@ -97,8 +104,6 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
     }
 
     val latestMessagesMap = LinkedHashMap<String, ChatMessage>()
-    private val newLatestMessage = HashMap<String, ChatMessage>()
-
 
     private fun listenForLatestMessages() {
         val fromId = FirebaseAuth.getInstance().uid
@@ -119,6 +124,9 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
 
                 latestMessagesMap.remove(messageId) // Loại bỏ tin nhắn khỏi danh sách
                 latestMessagesMap[messageId] = chatMessage // Thêm tin nhắn mới vào đầu danh sách
+                // log the  message text
+                Log.d("change", chatMessage.text)
+
 
                 refreshRecyclerView()
                 if (chatMessage.fromId != FirebaseAuth.getInstance().uid) {
@@ -147,13 +155,6 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
         }
         binding.recyclerviewLatestMessages.adapter = adapter
         // Các cài đặt khác cho RecyclerView nếu cần thiết
-    }
-
-
-    private fun addRemainMessage() {
-        newLatestMessage.values.forEach {
-           adapter.add(LatestMessagesRow(it))
-        }
     }
 
     fun notify(description: String) {
@@ -191,15 +192,6 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
         notificationManager.notify(1, notification)
 
     }
-
-//    private fun addDumpData() {
-//        Log.d("Latest", "adddumpdata")
-//        val adapter = GroupAdapter<GroupieViewHolder>()
-//        adapter.add(LatestMessagesRow())
-//        adapter.add(LatestMessagesRow())
-//        adapter.add(LatestMessagesRow())
-//        binding.recyclerviewLatestMessages.adapter = adapter
-//    }
 
     private fun fetchCurrentUser() {
         val uid = FirebaseAuth.getInstance().uid

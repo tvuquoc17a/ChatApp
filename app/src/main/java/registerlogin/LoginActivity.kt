@@ -19,6 +19,8 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.hide()
+
         binding.btnLogin.setOnClickListener(){
             val email = binding.edtLoginEmail.text.toString()
             val password = binding.edtLoginPassword.text.toString()
@@ -40,6 +42,10 @@ class LoginActivity : AppCompatActivity() {
                 .addOnFailureListener{
                     Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
                 }
+        }
+        binding.backToRegister.setOnClickListener(){
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
     }
 

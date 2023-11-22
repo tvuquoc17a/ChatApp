@@ -22,8 +22,11 @@
         android:autofillHints="Email"
         android:background="@drawable/rounder_corner_backgorund"
         android:drawableStart="@drawable/baseline_email_24"
+        android:drawablePadding="10dp"
         android:ems="10"
+        android:fontFamily="@font/montserrat_medium"
         android:hint="Email"
+        android:imeOptions="actionNext"
         android:inputType="textEmailAddress"
         android:paddingStart="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,8 +41,11 @@
         android:autofillHints="Password"
         android:background="@drawable/rounder_corner_backgorund"
         android:drawableStart="@drawable/baseline_password_24"
+        android:drawablePadding="10dp"
         android:ems="10"
         android:hint="Password"
+        android:fontFamily="@font/montserrat_medium"
+        android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:paddingStart="20dp"
         app:layout_constraintEnd_toEndOf="@id/edtLoginEmail"
@@ -58,5 +64,18 @@
         app:layout_constraintEnd_toEndOf="@id/edtLoginPassword"
         app:layout_constraintStart_toStartOf="@id/edtLoginPassword"
         app:layout_constraintTop_toBottomOf="@id/edtLoginPassword" />
+
+    <TextView
+        android:id="@+id/back_to_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:clickable="true"
+        android:text="@string/back_to_register"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

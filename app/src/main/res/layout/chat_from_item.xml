@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="15dp"
         android:background="@drawable/chat_from_item_bg"
+        android:fontFamily="@font/montserrat_medium"
         android:maxWidth="240dp"
         android:padding="15dp"
         android:text="@string/lorem"
@@ -22,6 +23,7 @@
         android:id="@+id/imageView"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/btn_star_big_on" />
 
