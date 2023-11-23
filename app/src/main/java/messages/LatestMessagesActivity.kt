@@ -107,6 +107,7 @@ class LatestMessagesActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickLis
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
                 latestMessagesMap[snapshot.key!!] = chatMessage // Add message to the top
+                //Log.d("onChildAdded", "Latest message: ${chatMessage.text}")
                 refreshRecyclerView()
                 if (chatMessage.fromId != FirebaseAuth.getInstance().uid) {
                     notify(chatMessage.text)
